@@ -191,6 +191,7 @@ async function testDB() {
 
         // const getIndividualPost = await getPostById(posts[0].id)
         // console.log("Result Individual Post", getIndividualPost )
+        
         const al = await  getPostByUser(1)
         console.log("Test", al)
 
