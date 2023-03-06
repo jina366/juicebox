@@ -118,6 +118,7 @@ async function createPost({
 }
 
 async function updatePost(postId, fields = {}) {
+    console.log(postId, "postID")
     
     const {tags} = fields;
     delete fields.tags;
@@ -133,7 +134,7 @@ async function updatePost(postId, fields = {}) {
         await client.query(`
         UPDATE posts
         SET ${ setString }
-        WHERE id=${ id }
+        WHERE id=${ postId }
         RETURNING *;
         `, Object.values(fields));
     }
