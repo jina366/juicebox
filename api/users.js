@@ -1,6 +1,6 @@
 const express = require("express");
 const { getAllUsers, getUserByUsername, createUser } = require("../db");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const usersRouter = express.Router();
 
 usersRouter.use((req, res, next) => {
@@ -17,14 +17,14 @@ usersRouter.get("/", async (req, res) => {
   });
 });
 
-usersRouter.post('/login', async (req, res, next) => {
+usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
 
   //request must have both
   if (!username || !password) {
     next({
       name: "MissingCredentialsError",
-      message: "Please supply both a username and password"
+      message: "Please supply both a username and password",
     });
   }
 
@@ -32,22 +32,25 @@ usersRouter.post('/login', async (req, res, next) => {
     const user = await getUserByUsername(username);
 
     if (user && user.password == password) {
-      const jwt = require('jsonwebtoken');
-      const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET)
-      res.send({ message: "you're logged in!" , token: token});
+      const jwt = require("jsonwebtoken");
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET
+      );
+      res.send({ message: "you're logged in!", token: token });
     } else {
       next({
         name: "IncorrectCredentialsError",
-        message: "Username or password is incorrect"
+        message: "Username or password is incorrect",
       });
     }
-  } catch(error) {
+  } catch (error) {
     console.log(error);
-    next(error)
+    next(error);
   }
 });
 
-usersRouter.post('/register', async (req, res, next) => {
+usersRouter.post("/register", async (req, res, next) => {
   const { username, password, name, location } = req.body;
 
   try {
@@ -56,7 +59,7 @@ usersRouter.post('/register', async (req, res, next) => {
     if (_user) {
       next({
         name: "UserExistsError",
-        message: "A user by that username already exists"
+        message: "A user by that username already exists",
       });
     }
 
@@ -67,19 +70,23 @@ usersRouter.post('/register', async (req, res, next) => {
       location,
     });
 
-    const token = jwt.sign({
-      id: user.id,
-      username
-    }, process.env.JWT_SECRET, {
-      expiresIn: '1w'
-    });
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1w",
+      }
+    );
 
     res.send({
       message: "thank you for signing up",
-      token
+      token,
     });
   } catch ({ name, message }) {
-    next({ name, message })
+    next({ name, message });
   }
 });
 
